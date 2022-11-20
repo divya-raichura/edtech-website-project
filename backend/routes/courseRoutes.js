@@ -4,14 +4,35 @@ const router = express.Router();
 // import controller
 const {
   getAllCourses,
+  postCourses,
+  getSingleCourse,
   getFavorites,
-  deleteFavorites,
   addToFavorites,
+  deleteFavorites,
 } = require("../controllers/coursesController");
 
-router.get("/", getAllCourses);
-router.get("/favorites", getFavorites);
-router.post("/:id", addToFavorites);
-router.delete("/favorites/:id", deleteFavorites);
+const authMiddleware = require("../middleware/authentication");
+
+/**
+ * GET     public      /api/courses/
+ * POST    private     /api/courses/course
+ * GET     public      /api/courses/course/:id
+ * GET     private     /api/courses/favorites
+ * POST    private     /api/courses/favorites/
+ * DELETE  private     /api/courses/favorites/:id
+ */
+
+router.route("/").get(getAllCourses);
+
+router.route("/course").post(authMiddleware, postCourses);
+
+router.route("/course/:id").get(getSingleCourse);
+
+router
+  .route("/favorites")
+  .get(authMiddleware, getFavorites)
+  .post(authMiddleware, addToFavorites);
+
+router.route("/favorites/:id").delete(authMiddleware, deleteFavorites);
 
 module.exports = router;
