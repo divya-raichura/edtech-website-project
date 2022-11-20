@@ -1,0 +1,51 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  color: black;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+  /*  */
+  width: 100%;
+  height: 5.5rem;
+  padding: 0 10%;
+}
+
+.logo {
+  font-weight: 900;
+  font-size: 3rem;
+}
+
+.logo a {
+  text-decoration: none;
+}
+
+.logo:hover {
+  transform: scale(1.5);
+}
+
+.header ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+}
+
+.header li {
+  margin-left: 1.5rem;
+  font-size: 1.5rem;
+}
+
+/* ul ke bad -> li me margin left vs a me pading*/
+.header li a {
+  text-decoration: none;
+  padding: 0.8rem;
+  color: black;
+  font-weight: 700;
+  border: 3px solid transparent;
+  border-radius: 9999px;
+}
+
+.header li a:hover {
+  background-color: #d2dce7;
+}
