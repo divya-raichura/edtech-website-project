@@ -26,6 +26,10 @@ const courseSchema = new mongoose.Schema(
       ref: "User",
       required: [true, "Please provide userId to store who created course"],
     },
+    creator: {
+      type: String,
+      required: [true, "please provide creator name"],
+    },
   },
   { timestamps: true }
 );

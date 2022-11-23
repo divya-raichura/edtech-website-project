@@ -8,6 +8,7 @@ const {
   getSingleCourse,
   getFavorites,
   addToFavorites,
+  getMyCourses,
   deleteCourse,
   deleteFavorites,
 } = require("../controllers/coursesController");
@@ -17,6 +18,7 @@ const authMiddleware = require("../middleware/authentication");
 /**
  * GET     public      /api/courses/
  * POST    private     /api/courses/
+ * Get    private     /api/courses/myCourses
  * GET     public      /api/courses/course/:id
  * GET     private     /api/courses/favorites
  * POST    private     /api/courses/favorites/
@@ -25,6 +27,8 @@ const authMiddleware = require("../middleware/authentication");
  */
 
 router.route("/").get(getAllCourses);
+
+router.route("/myCourses").get(authMiddleware, getMyCourses);
 
 router.route("/").post(authMiddleware, postCourses);
 

@@ -1,6 +1,7 @@
 /**
  * GET     public      /api/courses/
  * POST    private     /api/courses/
+ * Get    private     /api/courses/myCourses
  * GET     public      /api/courses/course/:id
  * GET     private     /api/courses/favorites
  * POST    private     /api/courses/favorites/
@@ -20,7 +21,23 @@ const { BadRequestError, NotFoundError } = require("../errors");
 // @access   Public
 const getAllCourses = asyncHandler(async (req, res) => {
   const courses = await Courses.find().sort("createdAt");
-  res.status(200).json({ count: courses.length, msg: "success", courses });
+  res.status(200).json({
+    count: courses.length,
+    msg: "success",
+    courses,
+  });
+});
+
+// @desc     Get my courses
+// @route    GET /api/courses/myCourses
+// @access   Private
+const getMyCourses = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    throw new BadRequestError("unauthenticated");
+  }
+  const userId = req.user.userId;
+  const courses = await Courses.find({ createdBy: userId });
+  res.status(200).json({ courses });
 });
 
 // @desc     Get single courses
@@ -41,7 +58,11 @@ const getSingleCourse = asyncHandler(async (req, res) => {
 // @route    POST /api/courses/course
 // @access   Private
 const postCourses = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    throw new BadRequestError("unauthenticated");
+  }
   req.body.createdBy = req.user.userId;
+  req.body.creator = req.user.name;
   const { name, description, image, price } = req.body;
 
   if (!name || !description || !image || !price) {
@@ -64,7 +85,7 @@ const deleteCourse = asyncHandler(async (req, res) => {
   if (!course) {
     throw new BadRequestError("course not found");
   }
-  res.status(202).send({ msg: "success" });
+  res.status(202).json({ msg: "success" });
 });
 
 // @desc     Get favorite courses
@@ -177,7 +198,7 @@ const deleteFavorites = asyncHandler(async (req, res) => {
       `No favorite with user id ${userId} and course id ${courseId}`
     );
   }
-  res.status(202).send({ msg: "success" });
+  res.status(202).json({ msg: "success" });
 });
 
 module.exports = {
@@ -185,6 +206,7 @@ module.exports = {
   getSingleCourse,
   postCourses,
   getFavorites,
+  getMyCourses,
   addToFavorites,
   deleteCourse,
   deleteFavorites,

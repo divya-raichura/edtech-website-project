@@ -24,7 +24,7 @@ export default function SingleCourse({
   _id,
   name,
   image,
-  createdBy,
+  creator,
   description,
   price,
 }) {
@@ -71,7 +71,7 @@ export default function SingleCourse({
       </div>
       <div className={classes.content}>
         <h1>{name}</h1>
-        <h3>{createdBy}</h3>
+        <h3>{creator}</h3>
         {/* desc and price should be shown when user clicks view */}
         <p style={{ color: "pink", fontSize: "20px" }}>{description}</p>
         <h3 style={{ color: "white", fontSize: "50px" }}>${price}</h3>
