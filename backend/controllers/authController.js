@@ -17,6 +17,9 @@ const register = asyncWrapper(async (req, res) => {
   console.log(name, email, password);
 
   // check if user exists
+  /* @note: we can avoid this if statement as we have 
+  validation in mongoose, it works but then it gives 500 err 
+  */
   const userExists = await User.findOne({ email });
   if (userExists) {
     console.log(userExists);

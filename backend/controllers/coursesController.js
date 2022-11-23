@@ -1,10 +1,11 @@
 /**
  * GET     public      /api/courses/
- * GET     private     /api/courses/course/:id
- * POST    private     /api/courses/course
+ * POST    private     /api/courses/
+ * GET     public      /api/courses/course/:id
  * GET     private     /api/courses/favorites
  * POST    private     /api/courses/favorites/
  * DELETE  private     /api/courses/favorites/:id
+ * DELETE  private     /api/courses/:id
  */
 
 // imports
@@ -19,7 +20,7 @@ const { BadRequestError, NotFoundError } = require("../errors");
 // @access   Public
 const getAllCourses = asyncHandler(async (req, res) => {
   const courses = await Courses.find().sort("createdAt");
-  res.status(200).json({ count: courses.length, courses });
+  res.status(200).json({ count: courses.length, msg: "success", courses });
 });
 
 // @desc     Get single courses
@@ -33,27 +34,47 @@ const getSingleCourse = asyncHandler(async (req, res) => {
     throw new NotFoundError(`No course with id ${id}`);
   }
 
-  res.status(200).json({ course });
+  res.status(200).json({ msg: "success", course });
 });
 
 // @desc     Post course
 // @route    POST /api/courses/course
 // @access   Private
 const postCourses = asyncHandler(async (req, res) => {
-  const { name, description, image, taughtBy } = req.body;
+  req.body.createdBy = req.user.userId;
+  const { name, description, image, price } = req.body;
 
-  if (!name || !description || !image) {
+  if (!name || !description || !image || !price) {
     throw new BadRequestError("Please provide all fields");
   }
 
   const course = await Courses.create(req.body);
-  res.status(200).json({ course });
+  res.status(201).json({ msg: "success", course });
+});
+
+// @desc     DELETE course
+// @route    DELETE /api/courses/:id
+// @access   Private
+const deleteCourse = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!req.user) {
+    throw new BadRequestError("User not found");
+  }
+  const course = await Courses.findByIdAndDelete(id);
+  if (!course) {
+    throw new BadRequestError("course not found");
+  }
+  res.status(202).send({ msg: "success" });
 });
 
 // @desc     Get favorite courses
 // @route    GET /api/courses/favorites
 // @access   Private
 const getFavorites = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    throw new BadRequestError("User not found");
+  }
+
   const userId = req.user.userId;
 
   const user = await User.findById(userId);
@@ -63,7 +84,22 @@ const getFavorites = asyncHandler(async (req, res) => {
     throw new BadRequestError("User not found");
   }
 
-  const favs = await Favorites.find({ favoritedBy: userId });
+  const favsIds = await Favorites.find({ favoritedBy: userId });
+  // console.log(favsIds);
+
+  const favArr = favsIds.map((item) => {
+    return item.favoritedCourse;
+  });
+  // console.log("favarr", favArr);
+
+  const favs = await Courses.find({ _id: { $in: favArr } });
+  console.log("favs : ", favs);
+
+  /** @Bug need to return fav courses
+   *
+   * todo 1: redefine model such that the courses contains array of users that have liked the course
+   * todo 2 -> done: find out how to query current model
+   */
 
   res.status(200).json({ favs });
 });
@@ -72,9 +108,12 @@ const getFavorites = asyncHandler(async (req, res) => {
 // @route    POST /api/courses/favorites/
 // @access   Private
 const addToFavorites = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    throw new BadRequestError("User not found");
+  }
+
   const userId = req.user.userId;
-  // note here, I don't know what will be sent in body
-  // id or _id?
+
   const { _id } = req.body;
 
   if (!_id) {
@@ -98,13 +137,19 @@ const addToFavorites = asyncHandler(async (req, res) => {
     favoritedCourse: _id,
   });
 
-  res.status(200).json({ fav });
+  res
+    .status(201)
+    .json({ msg: "success", courseName: course.name, favDetails: fav });
 });
 
 // @desc      Delete course from favorite
 // @route     DELETE /api/courses/favorites/:id
 // @access    Private
 const deleteFavorites = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    throw new BadRequestError("User not found");
+  }
+
   const userId = req.user.userId;
   const courseId = req.params.id;
 
@@ -132,14 +177,15 @@ const deleteFavorites = asyncHandler(async (req, res) => {
       `No favorite with user id ${userId} and course id ${courseId}`
     );
   }
-  res.status(200).send({ msg: "success" });
+  res.status(202).send({ msg: "success" });
 });
 
 module.exports = {
   getAllCourses,
   getSingleCourse,
-  getFavorites,
   postCourses,
+  getFavorites,
   addToFavorites,
+  deleteCourse,
   deleteFavorites,
 };
