@@ -1,3 +1,3 @@
 export default function LoginPage() {
-  return <div>LoginPage</div>;
+  return <h1 style={{ textAlign: "center" }}>LoginPage</h1>;
 }

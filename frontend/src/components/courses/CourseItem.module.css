@@ -2,6 +2,11 @@
   margin: 1rem 0;
 }
 
+p {
+  color: white;
+  font-weight: bold;
+}
+
 .image {
   width: 100%;
   height: 20rem;
@@ -20,27 +25,53 @@
   padding: 1rem;
 }
 
-.content h3 {
-  font-size: 1.25rem;
-  color: black;
-}
-
 .actions {
+  display: flex;
+  justify-content: center;
   padding: 1.5rem;
-  text-align: center;
 }
 
 .actions button {
-  padding: 0.7rem;
-  text-transform: capitalize;
-  cursor: pointer;
-  color: white;
-  background-color: rgb(0, 158, 0);
-  border: 2px solid;
+  padding: 0.8rem;
+  margin-left: 1rem;
   font-weight: bold;
-  border-radius: 9999px;
+  border: 3px solid;
+  border-radius: 999px;
+  font-size: large;
+  cursor: pointer;
 }
 
-.actions button:hover {
-  background-color: rgb(4, 107, 4);
+.viewBtn {
+  color: #3e8ed0a4;
+  background-color: transparent;
+}
+.viewBtn:hover {
+  background-color: #3e8ed0a4;
+  color: white;
+  transition: background-color 0.2s linear, color 0.2s linear;
+}
+
+.favBtn {
+  color: rgba(252, 81, 109, 0.753);
+  background-color: transparent;
+}
+
+.favBtn:hover {
+  background-color: rgba(252, 81, 109, 0.753);
+  color: white;
+  transition: background-color 0.2s linear, color 0.2s linear;
+}
+
+.favBtnOnClick {
+  background: rgba(252, 81, 109, 0.753);
+  color: white;
+}
+
+.deleteBtn {
+  color: red;
+  background-color: transparent;
+}
+.deleteBtn:hover {
+  background: red;
+  color: white;
 }

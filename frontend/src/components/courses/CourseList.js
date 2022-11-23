@@ -8,7 +8,7 @@ export default function CourseList(props) {
     <ul className={classes.list}>
       {props.data.map((obj) => {
         // note that we are passing single objs which are inside of the array in the course item as data ie, props:{data:{}}
-        return <CourseItem key={obj.id} data={obj} />;
+        return <CourseItem key={obj._id} data={obj} />;
       })}
     </ul>
   );

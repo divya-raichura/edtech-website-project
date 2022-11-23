@@ -1,30 +1,42 @@
 import CourseList from "../components/courses/CourseList";
-
-const DUMMY_DATA = [
-  {
-    id: "m1",
-    title: "This is a first meetup",
-    image: "https://miro.medium.com/max/800/1*fvlXUruIzwO-tr06MKcATQ.png",
-    address: "Meetupstreet 5, 12345 Meetup City",
-    description:
-      "This is a first, amazing meetup which you definitely should not miss. It will be a lot of fun!",
-  },
-  {
-    id: "m2",
-    title: "This is a second meetup",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/2560px-Stadtbild_M%C3%BCnchen.jpg",
-    address: "Meetupstreet 5, 12345 Meetup City",
-    description:
-      "This is a first, amazing meetup which you definitely should not miss. It will be a lot of fun!",
-  },
-];
+import axios from "axios";
+import { useState, useEffect } from "react";
+const url = "/api/courses";
 
 export default function AllCoursesPage() {
+  const [data, setData] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+  const [isErr, setErr] = useState(false);
+
+  const getData = async () => {
+    try {
+      const courses = await axios.get(url);
+      setLoading(false);
+      console.log(courses);
+      setData(courses.data.courses);
+    } catch (err) {
+      setErr(true);
+      setLoading(false);
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  if (isLoading) {
+    return <h1>Loading...</h1>;
+  }
+
+  if (isErr) {
+    return <h1>Error! Something went wrong...</h1>;
+  }
+
   return (
     <section>
-      <h1>All courses</h1>
-      <CourseList data={DUMMY_DATA} />
+      <h1 style={{textAlign:"center"}}>courses</h1>
+      <CourseList data={data} />
     </section>
   );
 }

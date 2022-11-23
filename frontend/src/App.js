@@ -7,6 +7,7 @@ import NewCoursePage from "./pages/NewCourse";
 import FavoritesPage from "./pages/Favorites";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
+import SingleCoursePage from "./pages/SingleCoursePage";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/login" element={<LoginPage />}></Route>
         <Route path="/new-course" element={<NewCoursePage />}></Route>
         <Route path="/favorites" element={<FavoritesPage />}></Route>
+        <Route path="/courses/:courseId" element={<SingleCoursePage />}></Route>
       </Routes>
     </Layout>
   );
