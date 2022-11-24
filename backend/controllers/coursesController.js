@@ -14,7 +14,11 @@ const Courses = require("../models/courseModel");
 const Favorites = require("../models/favModel");
 const User = require("../models/userModel");
 const asyncHandler = require("../middleware/asyncWrapper");
-const { BadRequestError, NotFoundError } = require("../errors");
+const {
+  BadRequestError,
+  NotFoundError,
+  UnauthenticatedError,
+} = require("../errors");
 
 // @desc     Get all courses
 // @route    GET /api/courses
@@ -81,10 +85,13 @@ const deleteCourse = asyncHandler(async (req, res) => {
   if (!req.user) {
     throw new BadRequestError("User not found");
   }
-  const course = await Courses.findByIdAndDelete(id);
-  if (!course) {
-    throw new BadRequestError("course not found");
+
+  // @make sure only user that created course can delete it
+  const course = await Courses.findById(id);
+  if (course.createdBy.toString() !== req.user.userId) {
+    throw new UnauthenticatedError("user not authorized to delete");
   }
+  await Courses.findByIdAndDelete(id);
   res.status(202).json({ msg: "success" });
 });
 
@@ -114,7 +121,7 @@ const getFavorites = asyncHandler(async (req, res) => {
   // console.log("favarr", favArr);
 
   const favs = await Courses.find({ _id: { $in: favArr } });
-  console.log("favs : ", favs);
+  // console.log("favs : ", favs);
 
   /** @Bug need to return fav courses
    *
@@ -153,14 +160,24 @@ const addToFavorites = asyncHandler(async (req, res) => {
     throw new BadRequestError("Course not found");
   }
 
-  const fav = await Favorites.create({
+  // check if course is already in fav
+  // was using 'const' hence gave error
+  const fav = await Favorites.findOne({
+    favoritedBy: userId,
+    favoritedCourse: _id,
+  });
+  if (fav) {
+    throw new BadRequestError("Already in fav");
+  }
+
+  const createFav = await Favorites.create({
     favoritedBy: userId,
     favoritedCourse: _id,
   });
 
   res
     .status(201)
-    .json({ msg: "success", courseName: course.name, favDetails: fav });
+    .json({ msg: "success", courseName: course.name, favDetails: createFav });
 });
 
 // @desc      Delete course from favorite
@@ -190,8 +207,6 @@ const deleteFavorites = asyncHandler(async (req, res) => {
     favoritedBy: userId,
     favoritedCourse: courseId,
   });
-
-  console.log("deleted fav: ", deletedFav);
 
   if (!deletedFav) {
     throw new NotFoundError(
