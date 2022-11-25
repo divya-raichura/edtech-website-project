@@ -1,3 +1,10 @@
+import Register from "../components/auth/Register"
+
 export default function RegisterPage() {
-  return <h1 style={{ textAlign: "center" }}>RegisterPage</h1>;
+  return (
+    <section style={{ textAlign: "center" }}>
+      <h1>Register</h1>
+      <Register></Register>
+    </section>
+  );
 }

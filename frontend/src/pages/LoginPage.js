@@ -1,3 +1,5 @@
 export default function LoginPage() {
-  return <h1 style={{ textAlign: "center" }}>LoginPage</h1>;
+  return <section style={{ textAlign: "center" }}>
+    <h1>Login</h1>
+  </section>;
 }

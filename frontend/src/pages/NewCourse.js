@@ -8,6 +8,7 @@ const token =
 
 export default function NewCoursePage() {
   const navigate = useNavigate();
+  
   async function handlePost(data) {
     try {
       const res = await axios.post(url, data, {
