@@ -4,6 +4,12 @@ const asyncWrapper = require("../middleware/asyncWrapper");
 
 const verifyUser = asyncWrapper(async (req, res, next) => {
   const authHeader = req.headers.authorization;
+  console.log(
+    "headers recieved authHeader",
+    authHeader,
+    "req header",
+    req.headers
+  );
 
   // authHeader should be there and it should start with bearer
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
