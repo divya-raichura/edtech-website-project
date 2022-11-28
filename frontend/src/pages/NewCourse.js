@@ -1,18 +1,19 @@
 import NewCourse from "../components/courses/NewCourse";
 import axios from "axios";
+import AuthService from "../services/auth.service";
 import { useNavigate } from "react-router-dom";
 
 const url = "/api/courses/";
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MzdiZDcwNmNlMzFiZTViNWYwOGQyMjgiLCJuYW1lIjoiZGl2eWE5IiwiaWF0IjoxNjY5MjE3NzU4fQ.rO83khtHBfYk92jEfM64we2Fkb70cPO6brP6YCPQGC0";
 
 export default function NewCoursePage() {
   const navigate = useNavigate();
-  
+  const user = AuthService.getUser();
+
   async function handlePost(data) {
     try {
+      console.log("user on post", user, user.token);
       const res = await axios.post(url, data, {
-        headers: { Authorization: "Bearer " + token },
+        headers: { Authorization: `Bearer ${user.token}` },
       });
       console.log(res);
       alert("new course created!");

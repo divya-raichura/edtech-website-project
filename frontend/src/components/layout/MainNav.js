@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
+import AuthService from "../../services/auth.service";
 import classes from "./MainNav.module.css";
 
 export default function MainNav() {
+  const user = AuthService.getUser();
+  const [showUser, setShowUser] = useState("");
   const [theme, setTheme] = useState("dark");
   const toggle = () => {
     if (theme === "dark") {
@@ -14,6 +16,13 @@ export default function MainNav() {
       setTheme("dark");
     }
   };
+  useEffect(() => {
+    if (!user) {
+      setShowUser("Register");
+    } else {
+      setShowUser("Me");
+    }
+  }, [user]);
   return (
     <header className={classes.header}>
       <div className={classes.logo}>
@@ -29,6 +38,9 @@ export default function MainNav() {
           </li>
           <li>
             <Link to="/favorites">Favorites</Link>
+          </li>
+          <li>
+            <Link to="/register">{showUser}</Link>
           </li>
           <button className={classes.toggleBtn} onClick={toggle}>
             {theme === "dark" ? <>light</> : <>dark</>}

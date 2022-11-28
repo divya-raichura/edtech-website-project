@@ -1,19 +1,21 @@
 import FavList from "../components/courses/FavList";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import AuthService from "../services/auth.service";
+import { useNavigate } from "react-router-dom";
 const url = "/api/courses/favorites";
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MzdiZDcwNmNlMzFiZTViNWYwOGQyMjgiLCJuYW1lIjoiZGl2eWE5IiwiaWF0IjoxNjY5MjE3NzU4fQ.rO83khtHBfYk92jEfM64we2Fkb70cPO6brP6YCPQGC0";
 
 export default function FavoritesPage() {
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [isErr, setErr] = useState(false);
+  const user = AuthService.getUser();
 
   const getData = async () => {
     try {
       const courses = await axios.get(url, {
-        headers: { Authorization: "Bearer " + token },
+        headers: { Authorization: `Bearer ${user.token}` },
       });
       setLoading(false);
       console.log("fav", courses);
@@ -26,6 +28,9 @@ export default function FavoritesPage() {
   };
 
   useEffect(() => {
+    if (!user) {
+      navigate("/register");
+    }
     getData();
   }, []);
 

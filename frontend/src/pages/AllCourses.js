@@ -1,7 +1,6 @@
 import CourseList from "../components/courses/CourseList";
-import axios from "axios";
 import { useState, useEffect } from "react";
-const url = "/api/courses";
+import UserService from "../services/user.service";
 
 export default function AllCoursesPage() {
   const [data, setData] = useState([]);
@@ -10,14 +9,12 @@ export default function AllCoursesPage() {
 
   const getData = async () => {
     try {
-      const courses = await axios.get(url);
+      const res = await UserService.getCourses();
       setLoading(false);
-      console.log(courses);
-      setData(courses.data.courses);
-    } catch (err) {
+      setData(res.courses);
+    } catch (error) {
       setErr(true);
-      setLoading(false);
-      console.log(err);
+      console.log(error);
     }
   };
 
@@ -35,7 +32,7 @@ export default function AllCoursesPage() {
 
   return (
     <section>
-      <h1 style={{textAlign:"center"}}>courses</h1>
+      <h1 style={{ textAlign: "center" }}>courses</h1>
       <CourseList data={data} />
     </section>
   );

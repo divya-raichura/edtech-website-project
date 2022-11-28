@@ -1,22 +1,29 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import AuthService from "../services/auth.service";
+import { useNavigate, useParams } from "react-router-dom";
 import SingleCourse from "../components/courses/SingleCourse";
 import axios from "axios";
 const url = "/api/courses/course/";
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MzdiZDcwNmNlMzFiZTViNWYwOGQyMjgiLCJuYW1lIjoiZGl2eWE5IiwiaWF0IjoxNjY5MjE3NzU4fQ.rO83khtHBfYk92jEfM64we2Fkb70cPO6brP6YCPQGC0";
 
 export default function SingleCoursePage() {
+  const navigate = useNavigate();
   const { courseId } = useParams();
+  const user = AuthService.getUser();
   const [data, setData] = useState({});
   const [isLoading, setLoading] = useState(true);
   const [isErr, setErr] = useState(false);
 
   useEffect(() => {
+    if (!user) {
+      navigate("/register");
+    }
     const getDataFromDb = async () => {
       try {
+        console.log(user);
         const res = await axios.get(url + `${courseId}`, {
-          headers: { Authorization: "Bearer " + token },
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
         });
         setLoading(false);
         setData(res.data.course);

@@ -1,8 +1,13 @@
 import Card from "../ui/Card";
 import classes from "../courses/NewCourse.module.css";
 import { useState } from "react";
+import AuthService from "../../services/auth.service";
+import { useNavigate } from "react-router-dom";
+
 
 export default function Register() {
+  const [Loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const [data, setData] = useState({
     name: "",
     email: "",
@@ -24,10 +29,22 @@ export default function Register() {
   const submitHandler = (e) => {
     e.preventDefault();
 
+    setLoading(true);
     const formData = {
       ...data,
     };
+
+    registerUser(formData);
+    navigate("/");
   };
+
+  const registerUser = (formData) => {
+    AuthService.register(formData).then(setLoading(false));
+  };
+
+  if (Loading) {
+    return <h1>Loading...</h1>;
+  }
 
   return (
     <Card>
@@ -49,7 +66,7 @@ export default function Register() {
             name="email"
             value={data.email}
             onChange={handleChange}
-            placeholder="Name"
+            placeholder="Email"
             type="Email"
             id="email"
           />

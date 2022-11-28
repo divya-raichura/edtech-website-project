@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Card from "../ui/Card";
 import classes from "./CourseItem.module.css";
 import axios from "axios";
+import AuthService from "../../services/auth.service";
+
 const url = "/api/courses/";
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MzdiZDcwNmNlMzFiZTViNWYwOGQyMjgiLCJuYW1lIjoiZGl2eWE5IiwiaWF0IjoxNjY5MjE3NzU4fQ.rO83khtHBfYk92jEfM64we2Fkb70cPO6brP6YCPQGC0";
 
 // if we don't use this and use directly fav = false in useState then after
 // after add to fav, localstorage is saved and fav = true
@@ -29,6 +29,13 @@ export default function SingleCourse({
 }) {
   const navigate = useNavigate();
   const [fav, setFav] = useState(getLocalStorage(_id));
+  const user = AuthService.getUser();
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/register");
+    }
+  });
 
   const addToFav = async (id) => {
     if (!fav) {
@@ -38,7 +45,7 @@ export default function SingleCourse({
           url + "favorites",
           { _id: id },
           {
-            headers: { Authorization: "Bearer " + token },
+            headers: { Authorization: `Bearer ${user.token}` },
           }
         );
         console.log("add to fav", res);
@@ -51,7 +58,7 @@ export default function SingleCourse({
       // /api/courses/favorites/:id
       try {
         const res = await axios.delete(url + `favorites/${id}`, {
-          headers: { Authorization: "Bearer " + token },
+          headers: { Authorization: `Bearer ${user.token}` },
         });
         localStorage.removeItem(id);
         console.log("remove fav", res);
@@ -73,7 +80,7 @@ export default function SingleCourse({
   const handleDelete = async () => {
     try {
       await axios.delete(url + `${_id}`, {
-        headers: { Authorization: "Bearer " + token },
+        headers: { Authorization: `Bearer ${user.token}` },
       });
       navigate(-1); // use navigate with url + "anywherer" cause it does not proxy
       alert("deleted the course");
@@ -98,7 +105,6 @@ export default function SingleCourse({
         <button className={classes.viewBtn} onClick={() => navigate(-1)}>
           Back
         </button>
-
         {/* IF USER NOT LOGGED IN THEN THESE BUTTONS WILL NOT BE SHOWN AND IF LOGGEDIN THEN ONLY SHOW IF USER CREATED THE POST */}
         <button
           className={fav ? classes.favBtnOnClick : classes.favBtn}
@@ -106,9 +112,11 @@ export default function SingleCourse({
         >
           add to favorites
         </button>
-        <button className={classes.deleteBtn} onClick={handleDelete}>
-          Delete
-        </button>
+        {user.user.name === creator && (
+          <button className={classes.deleteBtn} onClick={handleDelete}>
+            Delete
+          </button>
+        )}
       </div>
     </Card>
   );

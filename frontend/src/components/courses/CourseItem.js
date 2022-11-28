@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 export default function CourseItem(props) {
   const { _id, name, image, price } = props.data;
-
   const navigate = useNavigate();
 
   const showDetails = (_id) => {

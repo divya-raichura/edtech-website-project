@@ -1,7 +1,19 @@
 import FavItem from "./FavItem";
 import classes from "./CourseList.module.css";
+import AuthService from "../../services/auth.service";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function FavList(props) {
+  const navigate = useNavigate();
+  // const user = AuthService.getUser();
+
+  // useEffect(() => {
+  //   if (!user) { 
+  //     navigate("/register");
+  //   }
+  // });
+
   console.log("favlist", props);
   return (
     <ul className={classes.list}>

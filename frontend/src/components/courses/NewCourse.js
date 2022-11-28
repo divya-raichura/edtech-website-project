@@ -1,13 +1,24 @@
 import Card from "../ui/Card";
 import classes from "./NewCourse.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import AuthService from "../../services/auth.service";
+import { useNavigate } from "react-router-dom";
 
 export default function NewCourse(props) {
+  const navigate = useNavigate();
   const [data, setData] = useState({
     name: "",
     image: "",
     description: "",
     price: "",
+  });
+
+  const user = AuthService.getUser();
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/register");
+    }
   });
 
   const handleChange = (e) => {
