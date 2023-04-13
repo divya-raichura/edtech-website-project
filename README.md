@@ -1,4 +1,2 @@
-# everything-website
-- I don't know what should I name this website but I am trying to make something where user can post something, others can like the post, comment on them, post videos
-and I don't know what functionality I will add 
-- Right now, just making blogs like site where users can login, read blogs, create blogs and like the blogs
+crud website where users can sign in and create posts, and advertise their content
+This is one of my first projects, made using *react* in frontend, *nodejs* in backend, and *jwt and bcryptjs* for auth 
